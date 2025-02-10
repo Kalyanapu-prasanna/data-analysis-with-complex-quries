@@ -1,0 +1,56 @@
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 21
+Server version: 8.0.41 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE TABLE Employee (EmpID INT PRIMARY KEY,Name VARCHAR(50),Department VARCHAR(50),Salary DECIMAL(10,2), JoiningDate DATE);
+ERROR 1046 (3D000): No database selected
+mysql> use prasanna;
+Database changed
+mysql> CREATE TABLE Employee (EmpID INT PRIMARY KEY,Name VARCHAR(50),Department VARCHAR(50),Salary DECIMAL(10,2), JoiningDate DATE);
+Query OK, 0 rows affected (0.14 sec)
+
+mysql> INSERT INTO Employee (EmpID, Name, Department, Salary, JoiningDate) VALUES(1, 'Alice', 'HR', 50000, '2021-06-15'),(2, 'Bob', 'IT', 70000, '2020-09-10'),(3, 'Charlie', 'Finance', 60000, '2019-08-25'),(4, 'David', 'IT', 75000, '2018-12-01'),(5, 'Eve', 'HR', 52000, '2022-01-20');
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> ^C
+mysql> SELECT Name, Department, Salary, RANK() OVER (PARTITION BY Department ORDER BY Salary DESC) AS SalaryRank FROM Employee;
++---------+------------+----------+------------+
+| Name    | Department | Salary   | SalaryRank |
++---------+------------+----------+------------+
+| Charlie | Finance    | 60000.00 |          1 |
+| Eve     | HR         | 52000.00 |          1 |
+| Alice   | HR         | 50000.00 |          2 |
+| David   | IT         | 75000.00 |          1 |
+| Bob     | IT         | 70000.00 |          2 |
++---------+------------+----------+------------+
+5 rows in set (0.02 sec)
+
+mysql> SELECT Name, Salary FROM Employee WHERE Salary > (SELECT AVG(Salary) FROM Employee);
++-------+----------+
+| Name  | Salary   |
++-------+----------+
+| Bob   | 70000.00 |
+| David | 75000.00 |
++-------+----------+
+2 rows in set (0.02 sec)
+
+mysql> SELECT Name, Salary FROM Employee WHERE Salary > (SELECT AVG(Salary) FROM Employee);
++-------+----------+
+| Name  | Salary   |
++-------+----------+
+| Bob   | 70000.00 |
+| David | 75000.00 |
++-------+----------+
+2 rows in set (0.00 sec)
+
+mysql>
